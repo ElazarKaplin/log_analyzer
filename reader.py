@@ -13,3 +13,12 @@ def load_log_data(file_path):
         print(f"Error: The file '{file_path}' was not found.")
 
     return data
+
+
+
+
+def stream_log_data(filepath):
+    with open(filepath, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            yield row
