@@ -73,3 +73,20 @@ def filter_night_activity(data):
 def analyze_all_logs_dynamic(data):
     results = map(lambda r: {"ip": r[1], "suspicions": get_row_suspicions_dynamic(r, suspicion_checks)}, data)
     return list(filter(lambda x: len(x["suspicions"]) > 0, results))
+
+
+from checks import suspicion_checks, get_row_suspicions_dynamic
+
+def filter_suspicious_generator(log_generator):
+    for row in log_generator:
+        suspicions = get_row_suspicions_dynamic(row, suspicion_checks)
+        if len(suspicions) > 0:
+            yield row
+
+def add_suspicion_details_generator(suspicious_generator):
+    for row in suspicious_generator:
+        suspicions = get_row_suspicions_dynamic(row, suspicion_checks)
+        yield row, suspicions  # [cite: 90]
+
+def count_items_generator(generator):
+    return sum(1 for _ in generator) # משתמש ב-Generator Expression לספירה יעילה [cite: 98, 100]
