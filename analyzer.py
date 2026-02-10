@@ -59,3 +59,17 @@ def filter_high_risk_ips(suspicious_map):
         if len(issues) >= 2
     }
     return high_risk_map
+
+from checks import suspicion_checks, get_row_suspicions_dynamic
+
+def extract_hours(data):
+    return list(map(lambda row: int(row[0].split()[1].split(':')[0]), data))
+def convert_sizes_to_kb(data):
+    return list(map(lambda row: int(row[5]) / 1024, data))
+def filter_by_sensitive_port(data):
+    return list(filter(lambda row: row[3] in ["22", "23", "3389"], data))
+def filter_night_activity(data):
+    return list(filter(lambda row: 0 <= int(row[0].split()[1].split(':')[0]) < 6, data))
+def analyze_all_logs_dynamic(data):
+    results = map(lambda r: {"ip": r[1], "suspicions": get_row_suspicions_dynamic(r, suspicion_checks)}, data)
+    return list(filter(lambda x: len(x["suspicions"]) > 0, results))
